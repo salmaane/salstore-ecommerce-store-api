@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SneakerController;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ Route::prefix('sneakers')->group(function() {
     Route::get('/{id}', [SneakerController::class, 'show'])->whereNumber('id');
 });
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
 
 // Protected Routes
 Route::group(['middleware' => 'auth:sanctum'], function() {
