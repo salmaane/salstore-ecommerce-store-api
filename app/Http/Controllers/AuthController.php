@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => $user,
-            'token' => $user->createToken('Api Token of '.$user->name)->plainTextToken
+            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken
         ], 'logged in', 200);
     }
 
@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => $user,
-            'token' => $user->createToken('Api Token of '.$user->name)->plainTextToken
+            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken
         ], 'registred successfully', 201);
     }
 

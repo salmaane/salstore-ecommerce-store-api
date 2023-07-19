@@ -20,7 +20,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
 
 // Protected Routes
-Route::group(['middleware' => 'auth:sanctum'], function() {
+Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
     
     Route::prefix('sneakers')->group(function () {
         Route::post('/', [SneakerController::class, 'store']);
