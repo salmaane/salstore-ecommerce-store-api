@@ -123,4 +123,13 @@ class SneakerController extends Controller
             "message" => "sneaker deleted.",
         ],200);
     }
+
+    
+    public function search($name) {
+        $sneaker = Sneaker::with('media:id,sneaker_id,imageUrl,smallImageUrl,thumbUrl')
+                            ->where('title', 'like', '%'. $name .'%')
+                            ->get(['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+
+        return response()->json($sneaker, 200); 
+    }
 }

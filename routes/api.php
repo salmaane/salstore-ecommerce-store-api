@@ -14,6 +14,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('sneakers')->group(function() {
     Route::get('/', [SneakerController::class, 'index']);
     Route::get('/{id}', [SneakerController::class, 'show'])->whereNumber('id');
+    Route::get('search/{name}', [SneakerController::class, 'search'])->whereAlpha('name');
 });
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
