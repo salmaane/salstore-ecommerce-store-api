@@ -132,4 +132,28 @@ class SneakerController extends Controller
 
         return response()->json($sneaker, 200); 
     }
+
+    public function storeSneakers(Request $request) { // just for seeding
+        $sneakers = $request->all()['sneakers'];
+
+        foreach($sneakers as $sneaker) {
+            $insertedSneaker = Sneaker::create([
+                'title' => $sneaker['title'],
+                'brand' => $sneaker['brand'],
+                'colorway' => $sneaker['colorway'],
+                'gender' => $sneaker['gender'],
+                'retailPrice' => $sneaker['retailPrice'],
+                'releaseDate' => $sneaker['releaseDate'],
+            ]);
+
+            $insertedSneaker->media()->create([
+                'sneaker_id' => $insertedSneaker->id,
+                'imageUrl' => $sneaker['media']['imageUrl'],
+                'smallImageUrl' => $sneaker['media'][ 'smallImageUrl'],
+                'thumbUrl' => $sneaker['media']['thumbUrl'],
+            ]);
+        }
+        
+        return response()->json(["message"=>"inserted successfully"],201);
+    }
 }

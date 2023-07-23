@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::post('/', [SneakerController::class, 'store']);
         Route::patch('/{id}', [SneakerController::class, 'update'])->whereNumber('id');
         Route::delete('/{id}', [SneakerController::class, 'destroy'])->whereNumber('id');
+        Route::post('/store-sneakers', [SneakerController::class, 'storeSneakers']);
     });
 
 });
