@@ -15,13 +15,13 @@ class SneakerController extends Controller
 
     public function index()
     {
-        return response()->json(
-            Sneaker::with([
-                'media' => function($query) {
-                    $query
-                    ->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
-                }
-            ])->get(['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']), 200);
+        $sneakers = Sneaker::with([
+            'media' => function($query) {
+                $query->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
+            }
+        ])->get(['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+
+        return $this->success($sneakers, 200);
     }
 
 
@@ -60,7 +60,7 @@ class SneakerController extends Controller
                 'smallImageUrl' => $media->smallImageUrl,
                 'thumbUrl' => $media->thumbUrl
             ]
-        ], 'sneaker added.', 201);
+        ], 201);
     }
 
 
@@ -76,7 +76,7 @@ class SneakerController extends Controller
             return $this->error('', 'No sneaker found with id: '. $id, 404);
         }
         
-        return response()->json($sneaker, 200);
+        return $this->success($sneaker, 200);
     }
 
 
@@ -109,7 +109,7 @@ class SneakerController extends Controller
                 'smallImageUrl' => $request->smallImageUrl,
                 'thumbUrl' => $request->thumbUrl
             ]
-        ], 'Sneaker updated.', 200);
+        ], 200);
     }
 
 
@@ -119,7 +119,7 @@ class SneakerController extends Controller
             return $this->error('','sneaker with id: '. $id . ' not found',404);
         }
 
-        return response()->json([
+        return $this->success([
             "message" => "sneaker deleted.",
         ],200);
     }
@@ -130,7 +130,7 @@ class SneakerController extends Controller
                             ->where('title', 'like', '%'. $name .'%')
                             ->get(['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
 
-        return response()->json($sneaker, 200); 
+        return $this->success($sneaker, 200); 
     }
 
     public function storeSneakers(Request $request) { // just for seeding
@@ -154,6 +154,6 @@ class SneakerController extends Controller
             ]);
         }
         
-        return response()->json(["message"=>"inserted successfully"],201);
+        return $this->success(["message"=>"inserted successfully"],201);
     }
 }

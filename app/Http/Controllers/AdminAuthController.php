@@ -20,12 +20,13 @@ class AdminAuthController extends Controller
         $user = User::where('email', $request->email)->first();
         
         if(!$user || !Hash::check($request->password, $user->password) || $user->role != 'admin') {
-            return $this->error('', 'email or password are incorrect', 401);
+            return $this->error(['message' => 'email or password are incorrect'], 401);
         }
 
         return $this->success([
             'user' => $user,
-            'token' => $user->createToken('Api Token of admin '.$user->name, ['admin'])->plainTextToken
-        ], 'logged in.', 200);
+            'token' => $user->createToken('Api Token of admin '.$user->name, ['admin'])->plainTextToken,
+            'expiresIn' => 60*24*7
+        ], 200);
     }
 }

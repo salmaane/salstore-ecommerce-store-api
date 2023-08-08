@@ -21,13 +21,14 @@ class AuthController extends Controller
         $user = User::where('email',$request->email)->first();
 
         if(!$user || !Hash::check($request->password, $user->password)) {
-            return $this->error('','email or password are incorrect', 401);
+            return $this->error(['message'=> 'email or password are incorrect'], 401);
         }
 
         return $this->success([
             'user' => $user,
-            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken
-        ], 'logged in', 200);
+            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken,
+            'expiresIn' => 60 * 24
+        ], 200);
     }
 
     protected function register(RegisterUserRequest $request) {
@@ -42,8 +43,9 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => $user,
-            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken
-        ], 'registred successfully', 201);
+            'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken,
+            'expiresIn' => 60 * 24
+        ], 201);
     }
 
 }
