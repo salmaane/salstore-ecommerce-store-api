@@ -13,13 +13,15 @@ class SneakerController extends Controller
 {
     use ResponseTrait;
 
-    public function index()
-    {
+    public function index(Request $request)
+    {   
+        $limit = $request->limit ?? 10;
+
         $sneakers = Sneaker::with([
-            'media' => function($query) {
-                $query->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
-            }
-        ])->get(['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+                'media' => function($query) {
+                    $query->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
+                }
+        ])->paginate($limit, ['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
 
         return $this->success($sneakers, 200);
     }
