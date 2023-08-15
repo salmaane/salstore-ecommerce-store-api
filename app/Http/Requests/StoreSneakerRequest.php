@@ -28,9 +28,9 @@ class StoreSneakerRequest extends FormRequest
             'gender'=> ['required', 'string'],
             'retailPrice' => ['required', 'numeric'],
             'releaseDate' => ['required', 'date'],
-            'imageUrl' => ['required', 'string'],
-            'smallImageUrl'=> ['required', 'string'],
-            'thumbUrl'=> ['required', 'string'],
+            'imageUrl' => ['required', 'image','mimes:png,jpg,jpeg,svg','max:5120'],
+            'smallImageUrl'=> ['required', 'image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
+            'thumbUrl'=> ['required', 'image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
         ];
     }
 }

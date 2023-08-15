@@ -6,8 +6,8 @@ use App\Http\Requests\StoreSneakerRequest;
 use App\Http\Requests\UpdateSneakerRequest;
 use App\Models\Sneaker;
 use App\Traits\ResponseTrait;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SneakerController extends Controller
 {
@@ -22,8 +22,20 @@ class SneakerController extends Controller
                     $query->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
                 }
         ])->paginate($limit, ['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+        
+        foreach($sneakers as $sneaker) {
+            if(Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
+                $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+            }
+            if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
+                $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+            }
+            if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
+                $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
+            }
+        }
 
-        return $this->success($sneakers, 200);
+        return $this->success(($sneakers), 200);
     }
 
 
@@ -42,9 +54,9 @@ class SneakerController extends Controller
 
         $media = $sneaker->media()->create([
             'sneaker_id' => $sneaker->id,
-            'imageUrl' => $request->imageUrl,
-            'smallImageUrl' => $request->smallImageUrl,
-            'thumbUrl' => $request->thumbUrl,
+            'imageUrl' => $this->storeImage($request, 'imageUrl'),
+            'smallImageUrl' => $this->storeImage($request, 'smallImageUrl'),
+            'thumbUrl' => $this->storeImage($request, 'thumbUrl'),
         ]);
 
         return $this->success([
@@ -58,9 +70,9 @@ class SneakerController extends Controller
             'media' => [
                 'id' => $media->id,
                 'sneaker_id' => $media->sneaker_id,
-                'imageUrl' => $media->imageUrl,
-                'smallImageUrl' => $media->smallImageUrl,
-                'thumbUrl' => $media->thumbUrl
+                'imageUrl' => Storage::url($media->imageUrl),
+                'smallImageUrl' => Storage::url($media->smallImageUrl),
+                'thumbUrl' => Storage::url($media->thumbUrl),
             ]
         ], 201);
     }
@@ -76,6 +88,16 @@ class SneakerController extends Controller
 
         if(!$sneaker) {
             return $this->error('', 'No sneaker found with id: '. $id, 404);
+        }
+
+        if (Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
+            $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+        }
+        if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
+            $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+        }
+        if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
+            $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
         }
         
         return $this->success($sneaker, 200);
@@ -95,6 +117,16 @@ class SneakerController extends Controller
             'smallImageUrl' => $request->smallImageUrl,
             'thumbUrl' => $request->thumbUrl,
         ]);
+
+        if (Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
+            $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+        }
+        if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
+            $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+        }
+        if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
+            $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
+        }
 
         return $this->success([
             'id' => $sneaker->id,
@@ -134,6 +166,14 @@ class SneakerController extends Controller
 
         return $this->success($sneaker, 200); 
     }
+
+
+    private function storeImage($request, $imageName) {
+        $file = $request->file($imageName);
+        $path = $file->storeAs('productImages', 'public');
+        return $path;
+    }
+
 
     public function storeSneakers(Request $request) { // just for seeding
         $sneakers = $request->all()['sneakers'];
