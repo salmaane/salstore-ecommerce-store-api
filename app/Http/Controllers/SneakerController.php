@@ -25,13 +25,13 @@ class SneakerController extends Controller
         
         foreach($sneakers as $sneaker) {
             if(Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
-                $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+                $sneaker->media->thumbUrl = Storage::disk('public')->url($sneaker->media->thumbUrl);
             }
             if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
-                $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+                $sneaker->media->imageUrl = Storage::disk('public')->url($sneaker->media->imageUrl);
             }
             if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
-                $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
+                $sneaker->media->smallImageUrl = Storage::disk('public')->url($sneaker->media->smallImageUrl);
             }
         }
 
@@ -70,9 +70,9 @@ class SneakerController extends Controller
             'media' => [
                 'id' => $media->id,
                 'sneaker_id' => $media->sneaker_id,
-                'imageUrl' => Storage::url($media->imageUrl),
-                'smallImageUrl' => Storage::url($media->smallImageUrl),
-                'thumbUrl' => Storage::url($media->thumbUrl),
+                'imageUrl' => Storage::disk('public')->url($media->imageUrl),
+                'smallImageUrl' => Storage::disk('public')->url($media->smallImageUrl),
+                'thumbUrl' => Storage::disk('public')->url($media->thumbUrl),
             ]
         ], 201);
     }
@@ -91,13 +91,13 @@ class SneakerController extends Controller
         }
 
         if (Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
-            $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+            $sneaker->media->thumbUrl = Storage::disk('public')->url($sneaker->media->thumbUrl);
         }
         if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
-            $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+            $sneaker->media->imageUrl = Storage::disk('public')->url($sneaker->media->imageUrl);
         }
         if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
-            $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
+            $sneaker->media->smallImageUrl = Storage::disk('public')->url($sneaker->media->smallImageUrl);
         }
         
         return $this->success($sneaker, 200);
@@ -119,13 +119,13 @@ class SneakerController extends Controller
         ]);
 
         if (Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
-            $sneaker->media->thumbUrl = Storage::url($sneaker->media->thumbUrl);
+            $sneaker->media->thumbUrl = Storage::disk('public')->url($sneaker->media->thumbUrl);
         }
         if (Storage::disk('public')->exists($sneaker->media->imageUrl)) {
-            $sneaker->media->imageUrl = Storage::url($sneaker->media->imageUrl);
+            $sneaker->media->imageUrl = Storage::disk('public')->url($sneaker->media->imageUrl);
         }
         if (Storage::disk('public')->exists($sneaker->media->smallImageUrl)) {
-            $sneaker->media->smallImageUrl = Storage::url($sneaker->media->smallImageUrl);
+            $sneaker->media->smallImageUrl = Storage::disk('public')->url($sneaker->media->smallImageUrl);
         }
 
         return $this->success([
@@ -149,9 +149,21 @@ class SneakerController extends Controller
 
     public function destroy(string $id)
     {
+        $sneaker = Sneaker::with([
+            'media' => function ($query) {
+                $query->select(['id', 'sneaker_id', 'imageUrl', 'smallImageUrl', 'thumbUrl']);
+            }
+        ])->find($id, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+
         if(!Sneaker::destroy($id)) {
             return $this->error('','sneaker with id: '. $id . ' not found',404);
         }
+
+        Storage::disk('public')->delete([
+            $sneaker->media->thumbUrl,
+            $sneaker->media->smallImageUrl,
+            $sneaker->media->imageUrl,
+        ]);
 
         return $this->success([
             "message" => "sneaker deleted.",
@@ -170,7 +182,7 @@ class SneakerController extends Controller
 
     private function storeImage($request, $imageName) {
         $file = $request->file($imageName);
-        $path = $file->storeAs('productImages', 'public');
+        $path = $file->store('productImages', 'public');
         return $path;
     }
 
