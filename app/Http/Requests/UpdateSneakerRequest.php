@@ -22,15 +22,15 @@ class UpdateSneakerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:sneakers,title, ' . $this->id],
-            'brand' => ['required', 'string'],
-            'colorway' => ['required', 'string'],
-            'gender' => ['required', 'string'],
-            'retailPrice' => ['required', 'numeric'],
-            'releaseDate' => ['required', 'date'],
-            'imageUrl' => ['required', 'string'],
-            'smallImageUrl' => ['required', 'string'],
-            'thumbUrl' => ['required', 'string'],
+            'title' => [ 'string', 'max:255', 'unique:sneakers,title, ' . $this->id],
+            'brand' => ['string'],
+            'colorway' => ['string'],
+            'gender' => ['string'],
+            'retailPrice' => ['numeric'],
+            'releaseDate' => ['date'],
+            'imageUrl' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
+            'smallImageUrl' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
+            'thumbUrl' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
         ];
     }
 }

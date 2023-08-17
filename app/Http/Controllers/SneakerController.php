@@ -61,12 +61,12 @@ class SneakerController extends Controller
 
         return $this->success([
             'id' => $sneaker->id,
-            'title' => $request->title,
-            'brand' => $request->brand,
-            'colorway' => $request->colorway,
-            'gender' => $request->gender,
-            'retailPrice' => $request->retailPrice,
-            'releaseDate' => $request->releaseDate,
+            'title' => $sneaker->title,
+            'brand' => $sneaker->brand,
+            'colorway' => $sneaker->colorway,
+            'gender' => $sneaker->gender,
+            'retailPrice' => $sneaker->retailPrice,
+            'releaseDate' => $sneaker->releaseDate,
             'media' => [
                 'id' => $media->id,
                 'sneaker_id' => $media->sneaker_id,
@@ -110,12 +110,15 @@ class SneakerController extends Controller
 
         $sneaker = Sneaker::find($id);
 
-        $sneaker->update($request->except(['imageUrl', 'smallImageUrl', 'thumbUrl']));
+        if(!$sneaker) {
+            return $this->error(['message' => "sneaker (id: $id) not found"], 404);
+        }
 
+        $sneaker->update($request->except(['imageUrl', 'smallImageUrl', 'thumbUrl']));
         $sneaker->media()->update([
-            'imageUrl' => $request->imageUrl,
-            'smallImageUrl' => $request->smallImageUrl,
-            'thumbUrl' => $request->thumbUrl,
+            'thumbUrl' => $request->thumbUrl ? $this->storeImage($request,'thumbUrl') : $sneaker->media->thumbUrl,
+            'smallImageUrl' => $request->smallImageUrl ? $this->storeImage($request, 'smallImageUrl') : $sneaker->media->smallImageUrl,
+            'imageUrl' => $request->imageUrl ? $this->storeImage($request, 'imageUrl') : $sneaker->media->imageUrl,
         ]);
 
         if (Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
@@ -130,18 +133,18 @@ class SneakerController extends Controller
 
         return $this->success([
             'id' => $sneaker->id,
-            'title' => $request->title,
-            'brand' => $request->brand,
-            'colorway' => $request->colorway,
-            'gender' => $request->gender,
-            'retailPrice' => $request->retailPrice,
-            'releaseDate' => $request->releaseDate,
+            'title' => $sneaker->title,
+            'brand' => $sneaker->brand,
+            'colorway' => $sneaker->colorway,
+            'gender' => $sneaker->gender,
+            'retailPrice' => $sneaker->retailPrice,
+            'releaseDate' => $sneaker->releaseDate,
             'media' => [
                 'id' => $sneaker->media->id,
                 'sneaker_id' => $sneaker->media->sneaker_id,
-                'imageUrl' => $request->imageUrl,
-                'smallImageUrl' => $request->smallImageUrl,
-                'thumbUrl' => $request->thumbUrl
+                'imageUrl' => $sneaker->media->imageUrl,
+                'smallImageUrl' => $sneaker->media->smallImageUrl,
+                'thumbUrl' => $sneaker->media->thumbUrl
             ]
         ], 200);
     }
