@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SneakerController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,12 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::patch('/{id}', [SneakerController::class, 'update'])->whereNumber('id');
         Route::delete('/{id}', [SneakerController::class, 'destroy'])->whereNumber('id');
         Route::post('/store-sneakers', [SneakerController::class, 'storeSneakers']);
+    });
+
+    Route::prefix('users')->group(function() {
+        Route::get('/', [UsersController::class, 'index']);
+        Route::get('/{id}', [UsersController::class, 'show'])->whereNumber('id');
+        Route::delete('/{id}', [UsersController::class, 'destroy'])->whereNumber('id');
     });
 
 });

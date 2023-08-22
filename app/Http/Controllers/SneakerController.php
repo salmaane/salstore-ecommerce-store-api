@@ -159,7 +159,7 @@ class SneakerController extends Controller
         ])->find($id, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
 
         if(!Sneaker::destroy($id)) {
-            return $this->error('','sneaker with id: '. $id . ' not found',404);
+            return $this->error('sneaker with id: '. $id . ' not found',404);
         }
 
         Storage::disk('public')->delete([
