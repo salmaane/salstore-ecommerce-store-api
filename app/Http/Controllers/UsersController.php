@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -33,9 +34,20 @@ class UsersController extends Controller
     }
 
 
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
-        //
+        $request->validated($request->all());
+
+        $user = User::find($id);
+        if (!$user) {
+            return $this->error(['message' => "user (id: $id) not found"], 404);
+        }
+
+        $user->update($request->except(['facebook', 'instagram', 'twitter', 'linkedin']));
+        $user->socialLinks()->update($request->only(['facebook','instagram','twitter','linkedin']));
+        
+        $user = User::with('socialLinks:user_id,facebook,instagram,twitter,linkedin')->find($id);
+        return $this->success([$user], 200);
     }
 
 
