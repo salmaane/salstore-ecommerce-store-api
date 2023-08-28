@@ -17,7 +17,7 @@ class AdminAuthController extends Controller
             'password' => ['required', 'string']
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('socialLinks:user_id,facebook,instagram,twitter,linkedin')->where('email', $request->email)->first();
         
         if(!$user || !Hash::check($request->password, $user->password) || $user->role != 'admin') {
             return $this->error(['message' => 'email or password are incorrect'], 401);
