@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::patch('/{id}', [UsersController::class, 'update'])->whereNumber('id');
         Route::delete('/{id}', [UsersController::class, 'destroy'])->whereNumber('id');
         Route::patch('/update-profile/{id}',[UsersController::class, 'update_profile'])->whereNumber('id');
-        Route::patch('/delete-profile/{id}',[UsersController::class, 'delete_profile'])->whereNumber('id');
+        Route::delete('/delete-profile/{id}',[UsersController::class, 'delete_profile'])->whereNumber('id');
     });
 
 });
