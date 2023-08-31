@@ -24,7 +24,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['string', 'max:255'],
-            'email' => ['email', 'unique:users'],
+            'email' => ['email', 'unique:users,email,' . $this->id],
             'role' => ['in:admin,user'],
             'old_password' => ['string', 'max:255'],
             'password' => ['string', 'confirmed', Password::min(8)->letters()->numbers()->mixedCase()],
