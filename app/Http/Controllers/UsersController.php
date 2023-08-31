@@ -97,5 +97,17 @@ class UsersController extends Controller
         return $this->success( Storage::disk('public')->url($path) ,201);
     }
 
+    public function delete_profile(string $id) {
+        $user = User::find($id);
+        if (!$user) {
+            return $this->error(['message' => "User (id: $id) not found"], 404);
+        }
+        
+        if($user->profile && Storage::disk('public')->exists($user->profile)) {
+            Storage::disk('public')->delete($user->profle);
+            return $this->success(["message" => "profile picture deleted"],200);
+        }
 
+        return $this->success(["message"=> "there is no profile picture to delete"],200);
+    }
 }
