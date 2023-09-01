@@ -20,6 +20,12 @@ class UsersController extends Controller
 
         $users = User::with('socialLinks:user_id,facebook,instagram,twitter,linkedin')->where('role', $role)->paginate($limit);
 
+        foreach($users as $user) {
+            if($user->profile) {
+                $user->profile = Storage::disk('public')->url($user->profile);  
+            }
+        }
+
         return $this->success($users, 200);
     }
 
@@ -57,6 +63,11 @@ class UsersController extends Controller
         $user->socialLinks()->update($request->only(['facebook','instagram','twitter','linkedin']));
         
         $user = User::with('socialLinks:user_id,facebook,instagram,twitter,linkedin')->find($id);
+
+        if ($user->profile) {
+            $user->profile = Storage::disk('public')->url($user->profile);
+        }
+
         return $this->success($user, 200);
     }
 
@@ -103,8 +114,10 @@ class UsersController extends Controller
             return $this->error(['message' => "User (id: $id) not found"], 404);
         }
         
-        if($user->profile && Storage::disk('public')->exists($user->profile)) {
-            Storage::disk('public')->delete($user->profle);
+        $path = $user->profile;
+        if($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+            $user->update(['profile' => null]);
             return $this->success(["message" => "profile picture deleted"],200);
         }
 

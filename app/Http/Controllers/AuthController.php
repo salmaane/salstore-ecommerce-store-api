@@ -7,12 +7,14 @@ use App\Models\User;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
     use ResponseTrait;
 
-    protected function login(Request $request) {
+    protected function login(Request $request) 
+    {
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string']
@@ -22,6 +24,10 @@ class AuthController extends Controller
 
         if(!$user || !Hash::check($request->password, $user->password)) {
             return $this->error(['message'=> 'email or password are incorrect'], 401);
+        }
+
+        if ($user->profile) {
+            $user->profile = Storage::disk('public')->url($user->profile);
         }
 
         return $this->success([

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AdminAuthController extends Controller
 {
@@ -21,6 +22,10 @@ class AdminAuthController extends Controller
         
         if(!$user || !Hash::check($request->password, $user->password) || $user->role != 'admin') {
             return $this->error(['message' => 'email or password are incorrect'], 401);
+        }
+
+        if ($user->profile) {
+            $user->profile = Storage::disk('public')->url($user->profile);
         }
 
         return $this->success([
