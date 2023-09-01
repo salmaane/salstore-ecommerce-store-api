@@ -48,4 +48,8 @@ class User extends Authenticatable
     public function socialLinks() {
         return $this->hasOne(SocialLink::class);
     }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
 }
