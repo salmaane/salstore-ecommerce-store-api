@@ -21,7 +21,8 @@ class OrderFactory extends Factory
     {
         return [
             'user_id' => User::all()->random()->id,
-            'order_date' => fake()->dateTimeBetween('-2 months'),
+            'order_date' => fake()->dateTimeBetween('-3 months'),
+            'total_amount' => 0,
             'status' => fake()->randomElement(['delivered', 'pending', 'shipped']),
         ];
     }

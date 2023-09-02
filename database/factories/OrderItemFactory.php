@@ -19,12 +19,12 @@ class OrderItemFactory extends Factory
     public function definition(): array
     {
         $sneaker = Sneaker::all()->random();
-        $orderId = isset($attributes['order_id']) ? $attributes['order_id'] : Order::all()->random()->id;
+        // $orderId = isset($attributes['order_id']) ? $attributes['order_id'] : Order::all()->random()->id;
 
         return [
             'sneaker_id' => $sneaker->id,
             'quantity' => 1,
-            'price' => $sneaker->price,
+            'price' => $sneaker->retailPrice,
         ];
     }
 
