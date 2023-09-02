@@ -26,4 +26,17 @@ class SalesController extends Controller
 
         return $totalSales;
     }
+
+    public function revenue() {
+        $revenue = Order::where('status', 'delivered')->sum('total_amount');
+
+        return $revenue;
+    }
+
+    public function monthRevenue($monthsToSubtract = 0) {
+        $monthRevenue = Order::whereMonth('order_date', Carbon::today()->month - abs($monthsToSubtract))
+                        ->where('status', 'delivered')->sum('total_amount');
+
+        return $monthRevenue;
+    }
 }
