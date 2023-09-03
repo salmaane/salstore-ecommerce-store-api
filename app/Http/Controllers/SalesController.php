@@ -39,4 +39,16 @@ class SalesController extends Controller
 
         return $monthRevenue;
     }
+
+    public function dailyAverageOrder($monthsToSubtract = 0) {
+        $currentDate = Carbon::today();
+
+        if($monthsToSubtract === 0) {
+            $average = floor(Order::whereMonth('order_date', $currentDate->month)->count() / $currentDate->day);
+        } else {
+            $average = floor(Order::whereMonth('order_date', $currentDate->month - abs($monthsToSubtract) )->count() / 30);
+        }
+
+        return $average;
+    }
 }
