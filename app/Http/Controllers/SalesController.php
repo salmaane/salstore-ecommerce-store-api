@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Sneaker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,5 +71,18 @@ class SalesController extends Controller
                             ->get();
 
         return $topSellingProducts;
+    }
+
+    public function ordersPerDay($daysToSubtract = 7) {
+        $ordersPerDay = [];
+        
+        $day = Carbon::now();
+
+        for($i = 0; $i < $daysToSubtract; $i++) {
+            $day = $day->subDay();
+            $ordersPerDay[$day->toDateString()] = Order::where('order_date', $day->toDateString())->count();
+        }
+
+        return $ordersPerDay;
     }
 }
