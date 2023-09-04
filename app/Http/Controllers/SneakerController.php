@@ -21,7 +21,7 @@ class SneakerController extends Controller
                 'media' => function($query) {
                     $query->select(['id','sneaker_id','imageUrl', 'smallImageUrl', 'thumbUrl']);
                 }
-        ])->paginate($limit, ['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+        ])->paginate($limit, ['id','title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity']);
         
         foreach($sneakers as $sneaker) {
             if(Storage::disk('public')->exists($sneaker->media->thumbUrl)) {
@@ -50,6 +50,7 @@ class SneakerController extends Controller
             'gender' => $request->gender,
             'retailPrice' => $request->retailPrice,
             'releaseDate' => $request->releaseDate,
+            'quantity' => $request->quantity,
         ]);
 
         $media = $sneaker->media()->create([
@@ -84,7 +85,7 @@ class SneakerController extends Controller
             'media' => function ($query) {
                 $query->select(['id', 'sneaker_id', 'imageUrl', 'smallImageUrl', 'thumbUrl']);
             }
-        ])->find($id, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate']);
+        ])->find($id, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity']);
 
         if(!$sneaker) {
             return $this->error('', 'No sneaker found with id: '. $id, 404);

@@ -28,6 +28,7 @@ class StoreSneakerRequest extends FormRequest
             'gender'=> ['required', 'string'],
             'retailPrice' => ['required', 'numeric'],
             'releaseDate' => ['required', 'date'],
+            'quantity' => ['required','numeric'],
             'imageUrl' => ['required', 'image','mimes:png,jpg,jpeg,svg','max:5120'],
             'smallImageUrl'=> ['required', 'image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
             'thumbUrl'=> ['required', 'image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],

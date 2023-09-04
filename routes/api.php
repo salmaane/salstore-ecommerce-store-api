@@ -42,7 +42,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
     });
 
     Route::prefix('analytics')->group(function() { // For tests
-        Route::get('/',[SalesController::class, 'ordersPerDay']);
+        Route::get('/',[SalesController::class, 'lowStockProducts']);
     });
 
 });

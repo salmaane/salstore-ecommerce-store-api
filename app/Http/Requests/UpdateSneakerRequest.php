@@ -27,6 +27,7 @@ class UpdateSneakerRequest extends FormRequest
             'colorway' => ['string'],
             'gender' => ['string'],
             'retailPrice' => ['numeric'],
+            'quantity' => ['numeric'],
             'releaseDate' => ['date'],
             'imageUrl' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],
             'smallImageUrl' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:5120'],

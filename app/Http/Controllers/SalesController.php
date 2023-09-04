@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Sneaker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,5 +85,17 @@ class SalesController extends Controller
         }
 
         return $ordersPerDay;
+    }
+
+    public function lowStockProducts($limit = 10) {
+        $products = Sneaker::orderBy('quantity')
+                            ->with([
+                                'media' => function ($query) {
+                                    $query->select(['id', 'sneaker_id', 'imageUrl', 'smallImageUrl', 'thumbUrl']);
+                                }
+                            ])
+                            ->paginate($limit, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity']);
+
+        return $products;
     }
 }
