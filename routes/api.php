@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\SneakerController;
+use App\Http\Controllers\UserAnalyticsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +43,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
     });
 
     Route::prefix('analytics')->group(function() { // For tests
-        Route::get('/',[SalesController::class, 'lowStockProducts']);
+        Route::get('/',[UserAnalyticsController::class, 'newUsers']);
     });
 
 });
