@@ -15,6 +15,8 @@ class SneakerController extends Controller
 
     public function index(Request $request)
     {   
+        (new UserAnalyticsController)->captureVisit($request);
+
         $limit = $request->limit ?? 10;
 
         $sneakers = Sneaker::with([

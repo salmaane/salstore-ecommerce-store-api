@@ -30,6 +30,8 @@ class AuthController extends Controller
             $user->profile = Storage::disk('public')->url($user->profile);
         }
 
+        (new UserAnalyticsController)->captureVisit($request, $user->id);
+
         return $this->success([
             'user' => $user,
             'token' => $user->createToken('Api Token of '.$user->name, [])->plainTextToken,
@@ -46,6 +48,8 @@ class AuthController extends Controller
             'password'=> Hash::make($request->password),
             'role' => 'user'
         ]);
+
+        (new UserAnalyticsController)->captureVisit($request, $user->id);
 
         return $this->success([
             'user' => $user,

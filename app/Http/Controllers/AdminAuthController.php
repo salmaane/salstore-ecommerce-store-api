@@ -28,6 +28,8 @@ class AdminAuthController extends Controller
             $user->profile = Storage::disk('public')->url($user->profile);
         }
 
+        (new UserAnalyticsController)->captureVisit($request,$user->id);
+
         return $this->success([
             'user' => $user,
             'token' => $user->createToken('Api Token of admin '.$user->name, ['admin'])->plainTextToken,
