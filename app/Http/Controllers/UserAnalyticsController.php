@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserVisit;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Stevebauman\Location\Facades\Location;
 
 class UserAnalyticsController extends Controller
@@ -46,5 +47,16 @@ class UserAnalyticsController extends Controller
         return $newVisit;
     }
 
-    
+    public function usersVisits($limit = 15) {
+        $userVisits = UserVisit::select(
+                        'country',
+                        DB::raw('count(country) as visits_number'),
+                    )
+                    ->groupBy('country')->orderBy('visits_number','desc')->take($limit)->get();
+
+        return [
+            'total' => UserVisit::count(),
+            'countries' => $userVisits,
+        ];
+    }
 }
