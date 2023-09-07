@@ -43,7 +43,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
     });
 
     Route::prefix('analytics')->group(function() { // For tests
-        Route::get('/',[UserAnalyticsController::class, 'newUsers']);
+        Route::get('/',[UserAnalyticsController::class, 'captureVisit']);
     });
 
 });
