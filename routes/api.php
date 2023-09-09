@@ -2,9 +2,8 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SalesController;
+use App\Http\Controllers\DashboardAnalyticsController;
 use App\Http\Controllers\SneakerController;
-use App\Http\Controllers\UserAnalyticsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,8 +41,8 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::delete('/delete-profile/{id}',[UsersController::class, 'delete_profile'])->whereNumber('id');
     });
 
-    Route::prefix('analytics')->group(function() { // For tests
-        Route::get('/',[UserAnalyticsController::class, 'usersVisits']);
+    Route::prefix('analytics')->group(function() {
+        Route::get('/',[DashboardAnalyticsController::class, 'index']);
     });
 
 });

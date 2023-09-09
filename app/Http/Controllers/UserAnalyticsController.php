@@ -7,6 +7,7 @@ use App\Models\UserVisit;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Stevebauman\Location\Facades\Location;
 
 class UserAnalyticsController extends Controller
@@ -14,7 +15,13 @@ class UserAnalyticsController extends Controller
     use ResponseTrait;
 
     public function newUsers($limit = 10) {
-        $users = User::orderBy('created_at','desc')->paginate($limit);
+        $users = User::orderBy('created_at','desc')->take($limit)->get();
+
+        foreach ($users as $user) {
+            if ($user->profile) {
+                $user->profile = Storage::disk('public')->url($user->profile);
+            }
+        }
 
         return $users;
     }
@@ -47,7 +54,7 @@ class UserAnalyticsController extends Controller
         return $newVisit;
     }
 
-    public function usersVisits($limit = 15) {
+    public function usersVisits($limit = 10) {
         $userVisits = UserVisit::select(
                         'country',
                         DB::raw('count(country) as visits_number'),

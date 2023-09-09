@@ -54,32 +54,49 @@ class SalesController extends Controller
         return $average;
     }
 
-    public function topSellingProducts() {
-        $topSellingProducts = OrderItem::join('sneakers', 'order_items.sneaker_id', '=', 'sneakers.id')
-                            ->select('sneaker_id as id', 'sneakers.title', 'sneakers.brand',
-                                'sneakers.quantity as stockQuantity', 'sneakers.colorway',
-                                'sneakers.releaseDate', 'order_items.price',
-                                DB::raw('count(*) as soldQuantity'),
-                                DB::raw('SUM(order_items.quantity * order_items.price) as revenue')
-                            )
-                            ->groupBy(
-                                'sneaker_id', 'sneakers.title',
-                                'sneakers.brand', 'order_items.price',
-                                'sneakers.colorway', 'sneakers.quantity',
-                                'sneakers.releaseDate'
-                            )
-                            ->orderByDesc('soldQuantity')
-                            ->get();
+    public function topSellingProducts($limit = 10) {
+
+        $topSellingProducts = OrderItem::select(
+                                            'order_items.sneaker_id as id',
+                                            'sneakers.title',
+                                            'sneakers.brand',
+                                            'sneakers.brand',
+                                            'sneakers.quantity as stockQuantity',
+                                            'sneakers.colorway',
+                                            'sneakers.releaseDate',
+                                            'sneaker_media.thumbUrl',
+                                            'sneaker_media.smallImageUrl',
+                                            'sneaker_media.imageUrl',
+                                            'order_items.price',
+                                            DB::raw('SUM(order_items.quantity * order_items.price) as revenue'),
+                                            DB::raw('count(*) as soldQuantity',
+                                        ))
+                                        ->join('sneakers','sneakers.id','=','order_items.sneaker_id')
+                                        ->join('sneaker_media','sneaker_media.sneaker_id','=','order_items.sneaker_id')
+                                        ->groupBy(
+                                            'id',
+                                            'sneakers.title',
+                                            'sneakers.brand',
+                                            'sneakers.brand',
+                                            'sneakers.quantity',
+                                            'sneakers.colorway',
+                                            'sneakers.releaseDate',
+                                            'order_items.price',
+                                            'sneaker_media.thumbUrl',
+                                            'sneaker_media.smallImageUrl',
+                                            'sneaker_media.imageUrl',
+                                        )
+                                        ->orderBy('soldQuantity','desc')->take($limit)->get();
 
         return $topSellingProducts;
     }
 
-    public function ordersPerDay($daysToSubtract = 7) {
+    public function ordersPerDay($lastDays = 7) {
         $ordersPerDay = [];
         
         $day = Carbon::now();
 
-        for($i = 0; $i < $daysToSubtract; $i++) {
+        for($i = 0; $i < $lastDays; $i++) {
             $day = $day->subDay();
             $ordersPerDay[$day->toDateString()] = Order::where('order_date', $day->toDateString())->count();
         }
@@ -88,14 +105,14 @@ class SalesController extends Controller
     }
 
     public function lowStockProducts($limit = 10) {
+        
         $products = Sneaker::orderBy('quantity')
                             ->with([
                                 'media' => function ($query) {
-                                    $query->select(['id', 'sneaker_id', 'imageUrl', 'smallImageUrl', 'thumbUrl']);
+                                    $query->select(['sneaker_id', 'imageUrl', 'smallImageUrl', 'thumbUrl']);
                                 }
                             ])
-                            ->paginate($limit, ['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity']);
-
+                            ->take($limit)->get(['id', 'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity']);
         return $products;
     }
 }
