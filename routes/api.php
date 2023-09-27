@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardAnalyticsController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SneakerController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -39,6 +40,10 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::delete('/{id}', [UsersController::class, 'destroy'])->whereNumber('id');
         Route::patch('/update-profile/{id}',[UsersController::class, 'update_profile'])->whereNumber('id');
         Route::delete('/delete-profile/{id}',[UsersController::class, 'delete_profile'])->whereNumber('id');
+    });
+
+    Route::prefix('orders')->group(function() {
+        Route::get('/', [OrderController::class, 'index']);
     });
 
     Route::prefix('analytics')->group(function() {

@@ -10,7 +10,7 @@ class Sneaker extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate'
+        'title', 'brand', 'colorway', 'gender', 'retailPrice', 'releaseDate', 'quantity'
     ];
 
     public function media() {
