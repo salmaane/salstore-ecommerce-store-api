@@ -14,7 +14,7 @@ class UserAnalyticsController extends Controller
 {
     use ResponseTrait;
 
-    public function newUsers($limit = 10) {
+    public function newUsers($limit = 5) {
         $users = User::orderBy('created_at','desc')->take($limit)->get();
 
         foreach ($users as $user) {

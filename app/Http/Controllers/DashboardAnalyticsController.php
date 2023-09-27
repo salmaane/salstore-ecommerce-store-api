@@ -17,6 +17,7 @@ class DashboardAnalyticsController extends Controller
             'dailyAverageOrder' => $salesController->dailyAverageOrder(),
             'topSellingProducts' => $salesController->topSellingProducts(),
             'ordersPerDay' => $salesController->ordersPerDay(),
+            'salesPerDay' => $salesController->salesPerDay(),
             'lowStockProducts' => $salesController->lowStockProducts(),
             'newUsers' => $userAnalyticsController->newUsers(),
             'usersVisits' => $userAnalyticsController->usersVisits(),

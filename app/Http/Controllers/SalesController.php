@@ -54,7 +54,7 @@ class SalesController extends Controller
         return $average;
     }
 
-    public function topSellingProducts($limit = 10) {
+    public function topSellingProducts($limit = 5) {
 
         $topSellingProducts = OrderItem::select(
                                             'order_items.sneaker_id as id',
@@ -91,7 +91,7 @@ class SalesController extends Controller
         return $topSellingProducts;
     }
 
-    public function ordersPerDay($lastDays = 7) {
+    public function ordersPerDay($lastDays = 14) {
         $ordersPerDay = [];
         
         $day = Carbon::now();
@@ -104,7 +104,21 @@ class SalesController extends Controller
         return $ordersPerDay;
     }
 
-    public function lowStockProducts($limit = 10) {
+    public function salesPerDay($lastDays = 14)
+    {
+        $salesPerDay = [];
+
+        $day = Carbon::now();
+
+        for ($i = 0; $i < $lastDays; $i++) {
+            $day = $day->subDay();
+            $salesPerDay[$day->toDateString()] = Order::where('order_date', $day->toDateString())->where('status','delivered')->count();
+        }
+
+        return $salesPerDay;
+    }
+
+    public function lowStockProducts($limit = 5) {
         
         $products = Sneaker::orderBy('quantity')
                             ->with([
