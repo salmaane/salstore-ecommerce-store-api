@@ -44,6 +44,7 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
 
     Route::prefix('orders')->group(function() {
         Route::get('/', [OrderController::class, 'index']);
+        Route::patch('/{id}', [OrderController::class, 'update'])->whereNumber('id');
     });
 
     Route::prefix('analytics')->group(function() {
